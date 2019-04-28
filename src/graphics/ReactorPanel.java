@@ -85,16 +85,18 @@ public class ReactorPanel extends JPanel {
 				g.setColor(new Color(198, 198, 198, 255));
 				g.fillRect((4 + x * 67), (66 + y * 67), 64, 3);
 				// -> draw new bars
-				if(durabilityBarLengths[x][y] >= 32) {
-					g.setColor(new Color(0, 255, 0, 255));
-				} else if((durabilityBarLengths[x][y] >= 16) && (durabilityBarLengths[x][y] < 32)) {
-					g.setColor(new Color(255, 127, 40, 255));
-				} else {
-					g.setColor(new Color(255, 0, 0, 255));
+				if(componentValidation[x][y] == true) {
+					if(durabilityBarLengths[x][y] >= 32) {
+						g.setColor(new Color(0, 255, 0, 255));
+					} else if((durabilityBarLengths[x][y] >= 16) && (durabilityBarLengths[x][y] < 32)) {
+						g.setColor(new Color(255, 127, 40, 255));
+					} else {
+						g.setColor(new Color(255, 0, 0, 255));
+					}
+					final int startX = 4 + x * 67;
+					final int startY = 66 + y * 67;
+					g.fillRect(startX, startY, durabilityBarLengths[x][y], 3);					
 				}
-				final int startX = 4 + x * 67;
-				final int startY = 66 + y * 67;
-				g.fillRect(startX, startY, durabilityBarLengths[x][y], 3);
 			}
 		}
 		g.dispose();
