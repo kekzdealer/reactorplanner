@@ -6,60 +6,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.HashMap;
-
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.border.EtchedBorder;
 
 import logic.ComponentFactory;
-import logic.ComponentFactory.ComponentType;
+import logic.ComponentFactory.ComponentSubType;
 import logic.Reactor;
-import logic.StatusReport;
 
 @SuppressWarnings("serial")
 public class GraphicalUserInterface extends JFrame {
-	
-	public static final HashMap<ComponentFactory.ComponentType, BufferedImage> iconData = new HashMap<>();
-	public static final String REACTOR_BACKGROUND_NAME = "reactor";
-	public static final String EMPTY_COMPONENT_NAME = "emptyComponent";
-	public static BufferedImage reactorBackground;
-	public static BufferedImage emptyComponent;
-	
-	public static ComponentType selectedComponent;
-	
+		
 	public static void main(String[] args) {
 		
 		final Reactor reactor = new Reactor();
-		
-		// Load resources
-		try {
-			reactorBackground = ImageIO.read(Class.class.getResourceAsStream(
-					"/images/" +REACTOR_BACKGROUND_NAME + ".png"));
-			emptyComponent = ImageIO.read(Class.class.getResourceAsStream(
-					"/images/" +EMPTY_COMPONENT_NAME + ".png"));
-		} catch (IOException e) {
-			System.err.println("Couldn't load background resources");
-		}
-		for(ComponentType type : ComponentType.values()) {
-			try {
-				System.out.println("Loading icon: " +type.getStringName());
-				final BufferedImage image = ImageIO.read(
-						Class.class.getResourceAsStream("/images/" + type.getStringName() + ".png"));
-				if(image != null) {
-					iconData.put(type, image);					
-				}
-			} catch (IOException e) {
-				System.err.println("Couldn't load resource: " + type.getStringName());
-			}
-		}
 		
 		// Open window
 		GraphicalUserInterface gui = new GraphicalUserInterface();
@@ -71,14 +36,14 @@ public class GraphicalUserInterface extends JFrame {
 		gui.setLayout(null);
 		gui.getContentPane().setBackground(Color.LIGHT_GRAY);
 		
-		JComboBox<ComponentFactory.ComponentType> partPicker = 
-				new JComboBox<>(ComponentFactory.ComponentType.values());
+		JComboBox<ComponentFactory.ComponentSubType> partPicker = 
+				new JComboBox<>(ComponentFactory.ComponentSubType.values());
 		partPicker.setLocation(700,	11);
 		partPicker.setSize(200, 30);
 		partPicker.setVisible(true);
 		gui.add(partPicker);
 		
-		ReactorPanel reactorPanel = new ReactorPanel(reactorBackground);
+		ReactorPanel reactorPanel = new ReactorPanel();
 		reactorPanel.setLocation(10, 11);
 		reactorPanel.setSize(608, 407);
 		reactorPanel.setBackground(Color.LIGHT_GRAY);
@@ -88,17 +53,17 @@ public class GraphicalUserInterface extends JFrame {
 				final int slotX = (int) Math.floor(mousePos.getX() / 67);
 				final int slotY = (int) Math.floor(mousePos.getY() / 67);
 				if(me.getButton() == MouseEvent.BUTTON1) {
-					reactorPanel.addComponent(iconData.get(partPicker.getSelectedItem()), slotX, slotY);
-					reactor.insertComponent((ComponentType) partPicker.getSelectedItem(), slotX, slotY);
+					reactorPanel.addComponent((ComponentSubType) partPicker.getSelectedItem(), slotX, slotY);
+					reactor.insertComponent((ComponentSubType) partPicker.getSelectedItem(), slotX, slotY);
 				} else if (me.getButton() == MouseEvent.BUTTON3) {
-					reactorPanel.addComponent(emptyComponent, slotX, slotY);
-					// TODO : remove component from reactor when removed from UI
+					reactorPanel.removeComponent(slotX, slotY);
+					reactor.removeComponent(reactor.getComponent(slotX, slotY));
 				}
 				reactorPanel.repaint();
 			}
 		});
 		gui.add(reactorPanel);
-		
+		// INFO PANEL
 		JPanel infoPanel = new JPanel();
 		infoPanel.setLocation(10, 450);
 		infoPanel.setSize(972, 207);
@@ -106,40 +71,74 @@ public class GraphicalUserInterface extends JFrame {
 		infoPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 		infoPanel.setLayout(null);
 		gui.add(infoPanel);
+		// -> INFO LABELS
 		JLabel labelHullHeat = new JLabel("Hull Heat: ");
 		JLabel labelEUOutput = new JLabel("EU/t: ");
 		JLabel labelHUOutput = new JLabel("Hu/s ");
-		labelHullHeat.setSize(200, 30);
-		labelEUOutput.setSize(200, 30);
-		labelHUOutput.setSize(200, 30);
 		labelHullHeat.setLocation(3, 3);
 		labelEUOutput.setLocation(3, 50);
 		labelHUOutput.setLocation(3, 100);
+		labelHullHeat.setSize(200, 30);
+		labelEUOutput.setSize(200, 30);
+		labelHUOutput.setSize(200, 30);
+		
+		JProgressBar progressBar = new JProgressBar(0, 10000);
+		progressBar.setLocation(500, 30);
+		progressBar.setSize(100, 30);
+		progressBar.setValue(3000);
+		
+		
+		// -> REGISTER INFO ELEMENTS
 		infoPanel.add(labelHullHeat);
 		infoPanel.add(labelEUOutput);
 		infoPanel.add(labelHUOutput);
-		
+		infoPanel.add(progressBar);
+		// BUTTONS
 		JButton toggleReactorButton = new JButton("START");
-		toggleReactorButton.setSize(128, 32);
 		toggleReactorButton.setLocation(650, 200);
+		toggleReactorButton.setSize(128, 32);
 		toggleReactorButton.setBackground(Color.GREEN);
+		JButton resetButton = new JButton("RESET");
+		resetButton.setLocation(650, 250);
+		resetButton.setSize(128, 32);
+		resetButton.setBackground(Color.CYAN);
+		// -> BUTTON LISTENERS
 		toggleReactorButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				toggleReactorButton.setText(reactor.isRunning() ? "STOP" : "START");
-				toggleReactorButton.setBackground(reactor.isRunning() ? Color.RED : Color.GREEN);
 				if(reactor.isRunning()) {
-					reactor.setOff();
+					reactor.setIsActive(false);;
 				}
 				else {
-					reactor.setOn();
-					reactor.hookReactor(new StatusReport(labelHullHeat, labelEUOutput, labelHUOutput));
+					reactor.setIsActive(true);;
+					reactor.hookReactor();
 				}
+				toggleReactorButton.setText(reactor.isRunning() ? "STOP" : "START");
+				toggleReactorButton.setBackground(reactor.isRunning() ? Color.RED : Color.GREEN);
 			}
 		});
+		resetButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				reactor.setIsActive(false);
+				reactor.setHullHeat(0);
+				toggleReactorButton.setText(reactor.isRunning() ? "STOP" : "START");
+				toggleReactorButton.setBackground(reactor.isRunning() ? Color.RED : Color.GREEN);
+				reactor.removeAllComponents();
+				reactorPanel.removeAllComponents();
+				reactorPanel.repaint();
+			}
+		});
+		// -> REGISTER BUTTONS
 		gui.add(toggleReactorButton);
+		gui.add(resetButton);
 		
 		gui.setVisible(true);
-				
+		
+		final GUIUpdater guiUpdater = new GUIUpdater(reactor, reactorPanel, 
+				labelHullHeat, labelEUOutput, labelHUOutput);
+		final Thread updaterThread = new Thread(guiUpdater);
+		updaterThread.setName("GUI Updater Thread");
+		updaterThread.start();
+		
 	}
 	
 }
