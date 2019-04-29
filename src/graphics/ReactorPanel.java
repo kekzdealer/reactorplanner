@@ -3,13 +3,12 @@ package graphics;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
 import component_blueprints.FuelRod;
 import component_blueprints.HeatManagementComponent;
 import component_blueprints.NeutronReflector;
@@ -39,11 +38,12 @@ public class ReactorPanel extends JPanel {
 					"/images/" +"reactorOverlay" + ".png"));
 			emptyComponent = ImageIO.read(Class.class.getResourceAsStream(
 					"/images/" +"emptyComponent" + ".png"));
-		} catch (IllegalArgumentException e) {
-			System.err.println("Couldn't load background resources");
-		}
-		catch (IOException e) {
-			System.err.println("Couldn't load background resources");
+		} catch (FileNotFoundException e) {
+			System.err.println("FNFE - Couldn't find background ressoruces");
+		} catch(IllegalArgumentException e) {
+			System.err.println("IAE - Couldn't load background resources");
+		} catch (IOException e) {
+			System.err.println("IOE - Couldn't load background resources");
 		}
 		for(ComponentSubType subType : ComponentSubType.values()) {
 			try {
@@ -52,10 +52,12 @@ public class ReactorPanel extends JPanel {
 				if(image != null) {
 					iconData.put(subType, image);					
 				}
-			}  catch (IllegalArgumentException e) {
-				System.err.println("Couldn't load resource: " +subType.getStringName());
+			} catch (FileNotFoundException e) {
+				System.err.println("FNFE - Couldn't find resource: " +subType.getStringName());
+			} catch (IllegalArgumentException e) {
+				System.err.println("IAE - Couldn't load resource: " +subType.getStringName());
 			} catch (IOException e) {
-				System.err.println("Couldn't load resource: " + subType.getStringName());
+				System.err.println("IOE - Couldn't load resource: " +subType.getStringName());
 			}
 		}
 	}

@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -14,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 
+import graphics.GUIUpdater.LabelNames;
 import logic.ComponentFactory;
 import logic.ComponentFactory.ComponentSubType;
 import logic.Reactor;
@@ -46,21 +49,6 @@ public class GraphicalUserInterface extends JFrame {
 		reactorPanel.setLocation(10, 11);
 		reactorPanel.setSize(608, 407);
 		reactorPanel.setBackground(Color.LIGHT_GRAY);
-		reactorPanel.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent me) {
-				final Point mousePos = reactorPanel.getMousePosition();
-				final int slotX = (int) Math.floor(mousePos.getX() / 67);
-				final int slotY = (int) Math.floor(mousePos.getY() / 67);
-				if(me.getButton() == MouseEvent.BUTTON1) {
-					reactorPanel.addComponent((ComponentSubType) partPicker.getSelectedItem(), slotX, slotY);
-					reactor.insertComponent((ComponentSubType) partPicker.getSelectedItem(), slotX, slotY);
-				} else if (me.getButton() == MouseEvent.BUTTON3) {
-					reactorPanel.removeComponent(slotX, slotY);
-					reactor.removeComponent(reactor.getComponent(slotX, slotY));
-				}
-				reactorPanel.repaint();
-			}
-		});
 		gui.add(reactorPanel);
 		// INFO PANEL
 		JPanel infoPanel = new JPanel();
@@ -79,11 +67,56 @@ public class GraphicalUserInterface extends JFrame {
 		labelHUOutput.setLocation(6, 80);
 		labelHullHeat.setSize(200, 20);
 		labelEUOutput.setSize(200, 20);
-		labelHUOutput.setSize(200, 20);		
+		labelHUOutput.setSize(200, 20);
+		// -> INFO TOOLTIP LABELS (n = name, d = data)
+		JPanel tooltipPanel = new JPanel();
+		tooltipPanel.setLayout(null);
+		tooltipPanel.setLocation(704, 16);
+		tooltipPanel.setSize(250, 174);
+		tooltipPanel.setBackground(Color.LIGHT_GRAY);
+		tooltipPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+		infoPanel.add(tooltipPanel);
+		
+		JLabel labelTooltipName = new JLabel();
+		JLabel labelTooltip1n = new JLabel();
+		JLabel labelTooltip1d = new JLabel();
+		JLabel labelTooltip2n = new JLabel();
+		JLabel labelTooltip2d = new JLabel();
+		JLabel labelTooltip3n = new JLabel();
+		JLabel labelTooltip3d = new JLabel();
+		JLabel labelTooltip4n = new JLabel();
+		JLabel labelTooltip4d = new JLabel();
+		labelTooltipName.setLocation(10, 10);
+		labelTooltip1n.setLocation(10, 26);
+		labelTooltip1d.setLocation(130, 26);
+		labelTooltip2n.setLocation(10, 42);
+		labelTooltip2d.setLocation(130, 42);
+		labelTooltip3n.setLocation(10, 58);
+		labelTooltip3d.setLocation(130, 58);
+		labelTooltip4n.setLocation(10, 74);
+		labelTooltip4d.setLocation(130, 74);
+		labelTooltipName.setSize(200, 16);
+		labelTooltip1n.setSize(120, 16);
+		labelTooltip1d.setSize(120, 16);
+		labelTooltip2n.setSize(120, 16);
+		labelTooltip2d.setSize(120, 16);
+		labelTooltip3n.setSize(120, 16);
+		labelTooltip3d.setSize(120, 16);
+		labelTooltip4n.setSize(120, 16);
+		labelTooltip4d.setSize(120, 16);
 		// -> REGISTER INFO ELEMENTS
 		infoPanel.add(labelHullHeat);
 		infoPanel.add(labelEUOutput);
 		infoPanel.add(labelHUOutput);
+		tooltipPanel.add(labelTooltipName);
+		tooltipPanel.add(labelTooltip1n);
+		tooltipPanel.add(labelTooltip1d);
+		tooltipPanel.add(labelTooltip2n);
+		tooltipPanel.add(labelTooltip2d);
+		tooltipPanel.add(labelTooltip3n);
+		tooltipPanel.add(labelTooltip3d);
+		tooltipPanel.add(labelTooltip4n);
+		tooltipPanel.add(labelTooltip4d);
 		// BUTTONS
 		JButton toggleReactorButton = new JButton("START");
 		toggleReactorButton.setLocation(650, 200);
@@ -124,11 +157,48 @@ public class GraphicalUserInterface extends JFrame {
 		
 		gui.setVisible(true);
 		
+		final HashMap<LabelNames, JLabel> labels = new HashMap<>();
+		labels.put(LabelNames.HullHeat, labelHullHeat);
+		labels.put(LabelNames.EUOutput, labelEUOutput);
+		labels.put(LabelNames.HUOutput, labelHUOutput);
+		labels.put(LabelNames.ComponentName, labelTooltipName);
+		labels.put(LabelNames.Line1Name, labelTooltip1n);
+		labels.put(LabelNames.Line1Data, labelTooltip1d);
+		labels.put(LabelNames.Line2Name, labelTooltip2n);
+		labels.put(LabelNames.Line2Data, labelTooltip2d);
+		labels.put(LabelNames.Line3Name, labelTooltip3n);
+		labels.put(LabelNames.Line3Data, labelTooltip3d);
+		labels.put(LabelNames.Line4Name, labelTooltip4n);
+		labels.put(LabelNames.Line4Data, labelTooltip4d);
 		final GUIUpdater guiUpdater = new GUIUpdater(reactor, reactorPanel, 
-				labelHullHeat, labelEUOutput, labelHUOutput);
+				labels);
 		final Thread updaterThread = new Thread(guiUpdater);
 		updaterThread.setName("GUI Updater Thread");
 		updaterThread.start();
+		
+		// MOUSE LISTENERS
+		reactorPanel.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent me) {
+				final Point mousePos = reactorPanel.getMousePosition();
+				final int slotX = (int) Math.min(Math.floor(mousePos.getX() / 67), 8);
+				final int slotY = (int) Math.min(Math.floor(mousePos.getY() / 67), 5);
+				if(me.getButton() == MouseEvent.BUTTON1) {
+					reactorPanel.addComponent((ComponentSubType) partPicker.getSelectedItem(), slotX, slotY);
+					reactor.insertComponent((ComponentSubType) partPicker.getSelectedItem(), slotX, slotY);
+				} else if (me.getButton() == MouseEvent.BUTTON3) {
+					reactorPanel.removeComponent(slotX, slotY);
+					reactor.removeComponent(reactor.getComponent(slotX, slotY));
+				}
+				reactorPanel.repaint();
+			}
+		});
+		
+		infoPanel.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent me) {
+				final Point mousePos = gui.getMousePosition();
+				System.out.println("Mouse pos: " +mousePos.getX() +"/" +mousePos.getY());
+			}
+		});
 		
 	}
 	
