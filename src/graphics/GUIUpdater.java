@@ -1,10 +1,7 @@
 package graphics;
 
-import java.util.HashSet;
-
 import javax.swing.JLabel;
 
-import component_blueprints.ReactorComponent;
 import logic.Reactor;
 
 public class GUIUpdater implements Runnable {
@@ -15,9 +12,7 @@ public class GUIUpdater implements Runnable {
 	private final JLabel labelHullHeat;
 	private final JLabel labelEUOutput;
 	private final JLabel labelHUOutput;
-	
-	private HashSet<ReactorComponent> reactorComponents;
-	
+		
 	public GUIUpdater(Reactor reactor, ReactorPanel reactorPanel, 
 			JLabel labelHullHeat, JLabel labelEUOutput, JLabel labelHUOutput) {
 		this.reactor = reactor;

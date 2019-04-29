@@ -12,7 +12,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.border.EtchedBorder;
 
 import logic.ComponentFactory;
@@ -75,24 +74,16 @@ public class GraphicalUserInterface extends JFrame {
 		JLabel labelHullHeat = new JLabel("Hull Heat: ");
 		JLabel labelEUOutput = new JLabel("EU/t: ");
 		JLabel labelHUOutput = new JLabel("Hu/s ");
-		labelHullHeat.setLocation(3, 3);
-		labelEUOutput.setLocation(3, 50);
-		labelHUOutput.setLocation(3, 100);
-		labelHullHeat.setSize(200, 30);
-		labelEUOutput.setSize(200, 30);
-		labelHUOutput.setSize(200, 30);
-		
-		JProgressBar progressBar = new JProgressBar(0, 10000);
-		progressBar.setLocation(500, 30);
-		progressBar.setSize(100, 30);
-		progressBar.setValue(3000);
-		
-		
+		labelHullHeat.setLocation(6, 3);
+		labelEUOutput.setLocation(6, 40);
+		labelHUOutput.setLocation(6, 80);
+		labelHullHeat.setSize(200, 20);
+		labelEUOutput.setSize(200, 20);
+		labelHUOutput.setSize(200, 20);		
 		// -> REGISTER INFO ELEMENTS
 		infoPanel.add(labelHullHeat);
 		infoPanel.add(labelEUOutput);
 		infoPanel.add(labelHUOutput);
-		infoPanel.add(progressBar);
 		// BUTTONS
 		JButton toggleReactorButton = new JButton("START");
 		toggleReactorButton.setLocation(650, 200);

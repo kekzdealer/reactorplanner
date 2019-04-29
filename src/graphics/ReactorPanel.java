@@ -39,7 +39,10 @@ public class ReactorPanel extends JPanel {
 					"/images/" +"reactorOverlay" + ".png"));
 			emptyComponent = ImageIO.read(Class.class.getResourceAsStream(
 					"/images/" +"emptyComponent" + ".png"));
-		} catch (IOException e) {
+		} catch (IllegalArgumentException e) {
+			System.err.println("Couldn't load background resources");
+		}
+		catch (IOException e) {
 			System.err.println("Couldn't load background resources");
 		}
 		for(ComponentSubType subType : ComponentSubType.values()) {
@@ -49,6 +52,8 @@ public class ReactorPanel extends JPanel {
 				if(image != null) {
 					iconData.put(subType, image);					
 				}
+			}  catch (IllegalArgumentException e) {
+				System.err.println("Couldn't load resource: " +subType.getStringName());
 			} catch (IOException e) {
 				System.err.println("Couldn't load resource: " + subType.getStringName());
 			}
