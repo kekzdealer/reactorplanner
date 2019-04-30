@@ -21,6 +21,9 @@ import logic.ComponentFactory;
 import logic.ComponentFactory.ComponentSubType;
 import logic.Reactor;
 
+/*
+ * TOOO: Make sure component overwriting works
+ */
 @SuppressWarnings("serial")
 public class GraphicalUserInterface extends JFrame {
 		
@@ -187,7 +190,7 @@ public class GraphicalUserInterface extends JFrame {
 					reactor.insertComponent((ComponentSubType) partPicker.getSelectedItem(), slotX, slotY);
 				} else if (me.getButton() == MouseEvent.BUTTON3) {
 					reactorPanel.removeComponent(slotX, slotY);
-					reactor.removeComponent(reactor.getComponent(slotX, slotY));
+					reactor.removeComponent(reactor.getComponent(slotX, slotY), false);
 				}
 				reactorPanel.repaint();
 			}

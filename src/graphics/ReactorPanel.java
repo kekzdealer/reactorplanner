@@ -123,19 +123,19 @@ public class ReactorPanel extends JPanel {
 		// Calculate pixel lengths for bars
 		for(ReactorComponent rc : rcs) {
 			double durability = 0;
-			int durabilityMax = 0;
+			double durabilityMax = 0;
 			switch(rc.getType()) {
 			case HeatVent:
 			case HeatExchanger:
 			case CoolantCell:
 				HeatManagementComponent hmc = (HeatManagementComponent) rc;
 				durability = hmc.getHEAT_CAPACITY() - hmc.getHeat();
-				durabilityMax = hmc.getHEAT_CAPACITY();
+				durabilityMax = (int) hmc.getHEAT_CAPACITY();
 				break;
 			case FuelRod:
 				FuelRod fr = (FuelRod) rc;
 				durability = fr.getRemainingLifetime();
-				durabilityMax = fr.getLIFETIME();
+				durabilityMax = (int) fr.getLIFETIME();
 				break;
 			case NeutronReflector:
 				NeutronReflector nr = (NeutronReflector) rc;
@@ -146,7 +146,7 @@ public class ReactorPanel extends JPanel {
 				break;
 			}
 			double granularity = durabilityMax / 64.0D;
-			int pixels = (int) Math.floor(durability / granularity);
+			int pixels = (int) Math.round(durability / granularity);
 			
 			durabilityBarLengths[rc.getX()][rc.getY()] = pixels;	
 		}

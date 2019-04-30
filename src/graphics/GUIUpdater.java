@@ -7,6 +7,7 @@ import javax.swing.JLabel;
 
 import component_blueprints.CoolantCell;
 import component_blueprints.DepletedFuelRod;
+import component_blueprints.EmergencyFoam;
 import component_blueprints.FuelRod;
 import component_blueprints.HeatExchanger;
 import component_blueprints.HeatVent;
@@ -66,19 +67,19 @@ public class GUIUpdater implements Runnable {
 						HeatVent hv = (HeatVent) rc;
 						labels.get(LabelNames.ComponentName).setText("" +hv.getType());
 						labels.get(LabelNames.Line1Name).setText("Heat Capacity:");
-						labels.get(LabelNames.Line1Data).setText(hv.getHeat() +"/" +hv.getHEAT_CAPACITY());
+						labels.get(LabelNames.Line1Data).setText((int)hv.getHeat() +"/" +(int)hv.getHEAT_CAPACITY());
 						labels.get(LabelNames.Line2Name).setText("Comp. heat vented:");
-						labels.get(LabelNames.Line2Data).setText(hv.getComponentHeatVented() +"/" +hv.getCOMPONENT_VENT_RATE());
+						labels.get(LabelNames.Line2Data).setText((int)hv.getComponentHeatVented() +"/" +(int)hv.getCOMPONENT_VENT_RATE());
 						labels.get(LabelNames.Line3Name).setText("Hull heat drawn:");
-						labels.get(LabelNames.Line3Data).setText(hv.getHullHeatDrawn() +"/" +hv.getHULL_VENT_RATE());
+						labels.get(LabelNames.Line3Data).setText((int)hv.getHullHeatDrawn() +"/" +(int)hv.getHULL_VENT_RATE());
 						labels.get(LabelNames.Line4Name).setText("Self heat vented:");
-						labels.get(LabelNames.Line4Data).setText(hv.getSelfHeatVented() +"/" +hv.getSELF_VENT_RATE());
+						labels.get(LabelNames.Line4Data).setText((int)hv.getSelfHeatVented() +"/" +(int)hv.getSELF_VENT_RATE());
 						break;
 					case HeatExchanger:
 						HeatExchanger he = (HeatExchanger) rc;
 						labels.get(LabelNames.ComponentName).setText("" +he.getType());
 						labels.get(LabelNames.Line1Name).setText("Heat Capacity:");
-						labels.get(LabelNames.Line1Data).setText(he.getHeat() +"/" +he.getHEAT_CAPACITY());
+						labels.get(LabelNames.Line1Data).setText((int)he.getHeat() +"/" +(int)he.getHEAT_CAPACITY());
 						labels.get(LabelNames.Line2Name).setText("");
 						labels.get(LabelNames.Line2Data).setText("");
 						labels.get(LabelNames.Line3Name).setText("");
@@ -90,7 +91,7 @@ public class GUIUpdater implements Runnable {
 						CoolantCell cc = (CoolantCell) rc;
 						labels.get(LabelNames.ComponentName).setText("" +cc.getType());
 						labels.get(LabelNames.Line1Name).setText("Heat Capacity:");
-						labels.get(LabelNames.Line1Data).setText(cc.getHeat() +"/" +cc.getHEAT_CAPACITY());
+						labels.get(LabelNames.Line1Data).setText((int)cc.getHeat() +"/" +(int)cc.getHEAT_CAPACITY());
 						labels.get(LabelNames.Line2Name).setText("");
 						labels.get(LabelNames.Line2Data).setText("");
 						labels.get(LabelNames.Line3Name).setText("");
@@ -102,11 +103,11 @@ public class GUIUpdater implements Runnable {
 						FuelRod fr = (FuelRod) rc;
 						labels.get(LabelNames.ComponentName).setText("" +fr.getType());
 						labels.get(LabelNames.Line1Name).setText("Lifetime:");
-						labels.get(LabelNames.Line1Data).setText(fr.getRemainingLifetime() +"/" +fr.getLIFETIME());
+						labels.get(LabelNames.Line1Data).setText((int)fr.getRemainingLifetime() +"/" +(int)fr.getLIFETIME());
 						labels.get(LabelNames.Line2Name).setText("EU produced:");
-						labels.get(LabelNames.Line2Data).setText("" +fr.getEUProduced());
+						labels.get(LabelNames.Line2Data).setText("" +(int)fr.getEUProduced());
 						labels.get(LabelNames.Line3Name).setText("Heat produced:");
-						labels.get(LabelNames.Line3Data).setText("" +fr.getHeatProduced());
+						labels.get(LabelNames.Line3Data).setText("" +(int)fr.getHeatProduced());
 						labels.get(LabelNames.Line4Name).setText("");
 						labels.get(LabelNames.Line4Data).setText("");
 						break;
@@ -114,7 +115,7 @@ public class GUIUpdater implements Runnable {
 						NeutronReflector nr = (NeutronReflector) rc;
 						labels.get(LabelNames.ComponentName).setText("" +nr.getType());
 						labels.get(LabelNames.Line1Name).setText("Durability:");
-						labels.get(LabelNames.Line1Data).setText(nr.getDurability() +"/" +nr.getDURABILITY());
+						labels.get(LabelNames.Line1Data).setText((int)nr.getDurability() +"/" +(int)nr.getDURABILITY());
 						labels.get(LabelNames.Line2Name).setText("");
 						labels.get(LabelNames.Line2Data).setText("");
 						labels.get(LabelNames.Line3Name).setText("");
@@ -127,6 +128,18 @@ public class GUIUpdater implements Runnable {
 						labels.get(LabelNames.ComponentName).setText("" +dfr.getDepletedRod());
 						labels.get(LabelNames.Line1Name).setText("");
 						labels.get(LabelNames.Line1Data).setText("");
+						labels.get(LabelNames.Line2Name).setText("");
+						labels.get(LabelNames.Line2Data).setText("");
+						labels.get(LabelNames.Line3Name).setText("");
+						labels.get(LabelNames.Line3Data).setText("");
+						labels.get(LabelNames.Line4Name).setText("");
+						labels.get(LabelNames.Line4Data).setText("");
+						break;
+					case EmergencyFoam:
+						EmergencyFoam ef = (EmergencyFoam) rc;
+						labels.get(LabelNames.ComponentName).setText("" +ef.getType());
+						labels.get(LabelNames.Line1Name).setText("Threshold:");
+						labels.get(LabelNames.Line1Data).setText((int)(ef.getHULL_HEAT_THRESHOLD() * 100) +"%");
 						labels.get(LabelNames.Line2Name).setText("");
 						labels.get(LabelNames.Line2Data).setText("");
 						labels.get(LabelNames.Line3Name).setText("");
